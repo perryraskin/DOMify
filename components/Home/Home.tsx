@@ -9,6 +9,7 @@ import Prism from "prismjs"
 import CodeEditor from "react-simple-code-editor"
 import Highlight, { defaultProps } from "prism-react-renderer"
 import theme from "prism-react-renderer/themes/nightOwl"
+import { getGeneratedPageURL } from "../../utilities/domHelpers"
 
 import withLayout from "../../hocs/withLayout"
 
@@ -19,15 +20,28 @@ interface Props {}
 
 const Home: NextPage<Props> = ({}) => {
   const [url, setUrl] = React.useState("")
+  const [previewUrl, setPreviewUrl] = React.useState("")
   const [sourceCode, setSourceCode] = React.useState("")
   const [sourceStyles, setSourceStyles] = React.useState("")
   const [treeArray, setTreeArray] = React.useState([])
 
-  async function scrape(url) {
+  async function scrape(url, useBlob) {
+    setTreeArray([])
     const req = await fetch("/api/scrape?url=" + url)
     const res = await req.json()
-    setSourceCode(beautifyHTML(res.body))
-    setSourceStyles(beautifyCSS(res.css))
+    const resHTML = beautifyHTML(res.body)
+    const resCSS = beautifyCSS(res.css).replace(/\\:/g, ":")
+
+    const blobUrl = getGeneratedPageURL({
+      html: resHTML,
+      css: resCSS,
+      js: "",
+    })
+    if (useBlob) setPreviewUrl(blobUrl)
+    else setPreviewUrl(url)
+    setSourceCode(resHTML)
+    setSourceStyles(resCSS)
+
     Prism.highlightAll()
 
     let tempTree = []
@@ -156,9 +170,14 @@ const Home: NextPage<Props> = ({}) => {
       ></input>
       <br />
       <Button
-        text="Preview"
+        text="Preview URL"
         extend="bg-blue-600 hover:bg-blue-500 text-white"
-        onClick={() => scrape(url)}
+        onClick={() => scrape(url, false)}
+      />
+      <Button
+        text="Preview BLOB URL"
+        extend="bg-blue-600 hover:bg-blue-500 text-white"
+        onClick={() => scrape(url, true)}
       />
       <br />
       <br />
@@ -196,8 +215,12 @@ const Home: NextPage<Props> = ({}) => {
         <div>
           <iframe
             id="webpage"
-            src={url}
+            src={previewUrl}
             style={{ border: "none", width: "100%", height: "800px" }}
+            // srcDoc={sourceCode.replace(
+            //   "<body>",
+            //   `<body><script>${sourceStyles}</script>`
+            // )}
           ></iframe>
         </div>
       </div>
