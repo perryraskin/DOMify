@@ -27,10 +27,10 @@ const Layout: NextPage<Props> = ({ children }) => {
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
         />
-        <title>Next.js TailwindCSS Starter</title>
+        <title>DOMify</title>
         <meta
           name="description"
-          content="A Shopping Cart built with TypeScript, NextJS, React, Apollo Client, Shopify Storefront GraphQL API, and TailwindCSS."
+          content="A tool that makes the DOM more useful for frontend testing pre-implementation"
         />
       </Head>
       <div className="antialiased text-gray-900">
@@ -42,7 +42,7 @@ const Layout: NextPage<Props> = ({ children }) => {
             <br />
             <br />
             {children}
-            <Footer />
+            {/* <Footer /> */}
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import React from "react"
 import Head from "next/head"
 import App from "next/app"
 
+import "prismjs/themes/prism-tomorrow.css"
 import "../styles/tailwind.css"
 
 class MyApp extends App {

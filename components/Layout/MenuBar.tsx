@@ -47,7 +47,7 @@ const MenuBar: NextPage<Props> = ({}) => {
         </div>
         <div className="text-xl text-white font-bold tracking-tight ml-2">
           <Link href={`/`}>
-            <a>Next.js TailwindCSS Starter</a>
+            <a>DOMify</a>
           </Link>
         </div>
       </div>
