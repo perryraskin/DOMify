@@ -181,14 +181,14 @@ const Home: NextPage<Props> = ({}) => {
       />
       <br />
       <br />
-      <textarea
+      {/* <textarea
         className="w-full border-2"
         defaultValue={sourceCode}
       ></textarea>
       <textarea
         className="w-full border-2"
         defaultValue={sourceStyles}
-      ></textarea>
+      ></textarea> */}
       <div className="grid grid-cols-2 gap-4">
         <div className="overflow-auto" style={{ height: "800px" }}>
           {/* <div>
@@ -224,13 +224,29 @@ const Home: NextPage<Props> = ({}) => {
           ></iframe>
         </div>
       </div>
-      <pre
-        className="language-html h-100"
-        contentEditable
-        suppressContentEditableWarning={true}
-      >
-        <code className="language-html">{sourceCode}</code>
-      </pre>
+      <div className="text-left mt-10 grid grid-cols-2 gap-4">
+        <div className="overflow-auto" style={{ height: "800px" }}>
+          <h3 className="font-semibold">HTML</h3>
+          <pre
+            className="language-html h-100"
+            contentEditable
+            suppressContentEditableWarning={true}
+          >
+            <code className="language-html">{sourceCode}</code>
+          </pre>
+        </div>
+        <div className="overflow-auto" style={{ height: "800px" }}>
+          <h3 className="font-semibold">CSS</h3>
+          <pre
+            className="language-css h-100"
+            contentEditable
+            suppressContentEditableWarning={true}
+          >
+            <code className="language-css">{sourceStyles}</code>
+          </pre>
+        </div>
+      </div>
+
       {/* <div id="viewer" dangerouslySetInnerHTML={{ __html: sourceCode }}></div> */}
     </div>
   )
