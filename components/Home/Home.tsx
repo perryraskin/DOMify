@@ -47,9 +47,15 @@ const Home: NextPage<Props> = ({}) => {
       css: resCSS,
       js: "",
     })
-    if (useBlob) setSourceTemplate(blobTemplate)
+    if (useBlob) {
+      setSourceTemplate(blobTemplate)
+      setPreviewUrl("")
+    }
     //setPreviewUrl(blobUrl)
-    else setPreviewUrl(url)
+    else {
+      setPreviewUrl(url)
+      setSourceTemplate("")
+    }
     setSourceCode(resHTML)
     setSourceStyles(resCSS)
 
@@ -222,20 +228,23 @@ const Home: NextPage<Props> = ({}) => {
             : null}
         </div>
         <div>
-          {/* <iframe
-            id="webpage"
-            src={previewUrl}
-            style={{ border: "none", width: "100%", height: "800px" }}
-            // srcDoc={sourceCode.replace(
-            //   "<body>",
-            //   `<body><script>${sourceStyles}</script>`
-            // )}
-          ></iframe> */}
-          <div
-            id="webpage"
-            dangerouslySetInnerHTML={{ __html: sourceTemplate }}
-            style={{ border: "none", width: "100%", height: "800px" }}
-          ></div>
+          {previewUrl && !sourceTemplate ? (
+            <iframe
+              id="webpage"
+              src={previewUrl}
+              style={{ border: "none", width: "100%", height: "800px" }}
+              // srcDoc={sourceCode.replace(
+              //   "<body>",
+              //   `<body><script>${sourceStyles}</script>`
+              // )}
+            ></iframe>
+          ) : (
+            <div
+              id="webpage"
+              dangerouslySetInnerHTML={{ __html: sourceTemplate }}
+              style={{ border: "none", width: "100%", height: "800px" }}
+            ></div>
+          )}
         </div>
       </div>
       <div className="text-left mt-10 grid grid-cols-2 gap-4">
