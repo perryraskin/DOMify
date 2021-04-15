@@ -9,7 +9,10 @@ import Prism from "prismjs"
 import CodeEditor from "react-simple-code-editor"
 import Highlight, { defaultProps } from "prism-react-renderer"
 import theme from "prism-react-renderer/themes/nightOwl"
-import { getGeneratedPageURL } from "../../utilities/domHelpers"
+import {
+  getGeneratedPageURL,
+  getGeneratedPageTemplate,
+} from "../../utilities/domHelpers"
 
 import withLayout from "../../hocs/withLayout"
 
@@ -24,20 +27,28 @@ const Home: NextPage<Props> = ({}) => {
   const [sourceCode, setSourceCode] = React.useState("")
   const [sourceStyles, setSourceStyles] = React.useState("")
   const [treeArray, setTreeArray] = React.useState([])
+  const [sourceTemplate, setSourceTemplate] = React.useState("")
 
   async function scrape(url, useBlob) {
     setTreeArray([])
     const req = await fetch("/api/scrape?url=" + url)
     const res = await req.json()
     const resHTML = beautifyHTML(res.body)
-    const resCSS = beautifyCSS(res.css).replace(/\\:/g, ":")
+    // const resCSS = beautifyCSS(res.css).replace(/\\:/g, ":")
+    const resCSS = beautifyCSS(res.css)
 
-    const blobUrl = getGeneratedPageURL({
+    // const blobUrl = getGeneratedPageURL({
+    //   html: resHTML,
+    //   css: resCSS,
+    //   js: "",
+    // })
+    const blobTemplate = getGeneratedPageTemplate({
       html: resHTML,
       css: resCSS,
       js: "",
     })
-    if (useBlob) setPreviewUrl(blobUrl)
+    if (useBlob) setSourceTemplate(blobTemplate)
+    //setPreviewUrl(blobUrl)
     else setPreviewUrl(url)
     setSourceCode(resHTML)
     setSourceStyles(resCSS)
@@ -45,7 +56,7 @@ const Home: NextPage<Props> = ({}) => {
     Prism.highlightAll()
 
     let tempTree = []
-    const tree = document.getElementById("test-root")
+    const tree = document.getElementById("webpage")
     tree.childNodes.forEach((child) => {
       tempTree.push(child)
     })
@@ -204,16 +215,14 @@ const Home: NextPage<Props> = ({}) => {
           {/* <pre className="language-html h-100" contentEditable>
             <code className="language-html">{sourceCode}</code>
           </pre> */}
-          <div className="border-2 border-gray-400 rounded-lg bg-gray-100">
-            {treeArray
-              ? treeArray.map((node, index) => (
-                  <InspectedElement key={index} node={node} />
-                ))
-              : null}
-          </div>
+          {treeArray
+            ? treeArray.map((node, index) => (
+                <InspectedElement key={index} node={node} />
+              ))
+            : null}
         </div>
         <div>
-          <iframe
+          {/* <iframe
             id="webpage"
             src={previewUrl}
             style={{ border: "none", width: "100%", height: "800px" }}
@@ -221,7 +230,12 @@ const Home: NextPage<Props> = ({}) => {
             //   "<body>",
             //   `<body><script>${sourceStyles}</script>`
             // )}
-          ></iframe>
+          ></iframe> */}
+          <div
+            id="webpage"
+            dangerouslySetInnerHTML={{ __html: sourceTemplate }}
+            style={{ border: "none", width: "100%", height: "800px" }}
+          ></div>
         </div>
       </div>
       <div className="text-left mt-10 grid grid-cols-2 gap-4">

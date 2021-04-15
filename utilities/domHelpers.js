@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require("uuid")
+
 export const getGeneratedPageURL = ({ html, css, js }) => {
   const getBlobURL = (code, type) => {
     const blob = new Blob([code], { type })
@@ -20,6 +22,62 @@ export const getGeneratedPageURL = ({ html, css, js }) => {
   `
 
   return getBlobURL(source, "text/html")
+}
+
+export const getGeneratedPageTemplate = ({ html, css, js }) => {
+  const getBlobURL = (code, type) => {
+    const blob = new Blob([code], { type })
+    return URL.createObjectURL(blob)
+  }
+
+  var doc = new DOMParser().parseFromString(html, "text/xml")
+  //console.log("DOC:", doc.querySelector("body"))
+  var body = doc.querySelector("body")
+  addUniqueIdToNodes(body)
+  html = body.outerHTML
+
+  const cssURL = getBlobURL(css, "text/css")
+  const jsURL = getBlobURL(js, "text/javascript")
+
+  const source = `
+    <html>
+      <head>
+        ${css && `<link rel="stylesheet" type="text/css" href="${cssURL}" />`}
+        ${js && `<script src="${jsURL}"></script>`}
+      </head>
+      <body>
+        ${html || ""}
+      </body>
+    </html>
+  `
+
+  return source
+}
+
+function walkTheDOM(node, func) {
+  func(node)
+  node = node.firstChild
+  while (node) {
+    walkTheDOM(node, func)
+    node = node.nextSibling
+  }
+}
+
+function addUniqueIdToNodes(node) {
+  if (typeof node === "string") {
+    node = document.getElementById(node)
+  }
+
+  function addUniqueId(currentNode) {
+    // console.log("currentNode", currentNode)
+    if (currentNode.nodeType === 1) {
+      currentNode.setAttribute("data-domifyid", uuidv4())
+    }
+  }
+
+  walkTheDOM(node, addUniqueId)
+
+  return
 }
 
 // Mapping between tag names and css default values lookup tables. This allows to exclude default values in the result.
